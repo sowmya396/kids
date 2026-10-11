@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Navratri Joy! - Toddler Festive Mini-Games</title>
+    <!-- Tailwind CSS for layout & typography -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti for victory celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap');
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            background-color: #fdf2e9;
+        }
+
+        .font-fredoka {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* Pulsing glow animation for interactive buttons */
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(245, 158, 11, 0.8); }
+        }
+
+        .pulse-btn {
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        /* Floating animation */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+
+        .float-elem {
+            animation: floatSlow 3s infinite ease-in-out;
+        }
+
+        /* Tap active scale */
+        .tap-bounce {
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .tap-bounce:active {
+            transform: scale(0.92);
+        }
+
+        /* Segment hover effect for Mandala */
+        .mandala-path {
+            cursor: pointer;
+            transition: fill 0.2s ease, filter 0.2s ease;
+        }
+        .mandala-path:hover {
+            filter: brightness(1.15) drop-shadow(0 0 3px rgba(255,215,0,0.8));
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden">
+
+    <!-- TOP HEADER / NAV -->
+    <header class="bg-amber-500 text-white p-3 md:p-4 shadow-lg border-b-4 border-amber-600 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-2 cursor-pointer" onclick="showMainMenu()">
+            <span class="text-3xl md:text-4xl float-elem">🪔</span>
+            <div>
+                <h1 class="font-fredoka text-xl md:text-2xl tracking-wide text-yellow-100 drop-shadow">Navratri Joy!</h1>
+                <p class="text-xs md:text-sm text-yellow-200 font-semibold hidden sm:block">Fun Games for Little Champions (Ages 3-5)</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button id="soundToggleBtn" onclick="toggleMute()" class="bg-amber-600 hover:bg-amber-700 text-yellow-100 px-3 py-1.5 rounded-full text-sm font-bold shadow flex items-center gap-1.5 border border-amber-400">
+                <span id="soundIcon">🔊</span> <span id="soundText" class="hidden sm:inline">Sound On</span>
+            </button>
+            <button id="homeBtn" onclick="showMainMenu()" class="hidden bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow border border-red-300">
+                🏠 Menu
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-4xl w-full mx-auto p-3 md:p-6 flex flex-col justify-center items-center">
+
+        <!-- GAME MENU OVERLAY -->
+        <div id="gameMenu" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 my-auto py-4">
+            
+            <!-- Game 1 Card -->
+            <div onclick="startGame('colors')" class="bg-gradient-to-br from-red-500 to-rose-600 text-white rounded-3xl p-5 shadow-xl border-4 border-rose-300 cursor-pointer tap-bounce flex flex-col items-center text-center relative overflow-hidden group">
+                <div class="text-5xl md:text-6xl mb-2 float-elem">🌈</div>
+                <h2 class="font-fredoka text-xl md:text-2xl text-yellow-200">9 Colors of Navratri</h2>
+                <p class="text-xs md:text-sm mt-1 text-rose-100">Match festive items to their vibrant colorful baskets!</p>
+                <span class="mt-4 px-4 py-1.5 bg-yellow-400 text-slate-900 rounded-full font-fredoka text-sm shadow">Play Now ▶</span>
+            </div>
+
+            <!-- Game 2 Card -->
+            <div onclick="startGame('dandiya')" class="bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-3xl p-5 shadow-xl border-4 border-amber-300 cursor-pointer tap-bounce flex flex-col items-center text-center relative overflow-hidden group">
+                <div class="text-5xl md:text-6xl mb-2 float-elem">🥁</div>
+                <h2 class="font-fredoka text-xl md:text-2xl text-yellow-200">Dandiya Beat Maker</h2>
+                <p class="text-xs md:text-sm mt-1 text-amber-100">Tap drums & sticks, record your beats, and play them back!</p>
+                <span class="mt-4 px-4 py-1.5 bg-yellow-400 text-slate-900 rounded-full font-fredoka text-sm shadow">Play Now ▶</span>
+            </div>
+
+            <!-- Game 3 Card -->
+            <div onclick="startGame('vahana')" class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-3xl p-5 shadow-xl border-4 border-emerald-300 cursor-pointer tap-bounce flex flex-col items-center text-center relative overflow-hidden group">
+                <div class="text-5xl md:text-6xl mb-2 float-elem">🐁🦚</div>
+                <h2 class="font-fredoka text-xl md:text-2xl text-yellow-200">Vahana God Match</h2>
+                <p class="text-xs md:text-sm mt-1 text-emerald-100">Match Ganesha, Shiva, and Durga to their sacred animal rides!</p>
+                <span class="mt-4 px-4 py-1.5 bg-yellow-400 text-slate-900 rounded-full font-fredoka text-sm shadow">Play Now ▶</span>
+            </div>
+
+            <!-- Game 4 Card -->
+            <div onclick="startGame('trace')" class="bg-gradient-to-br from-purple-600 to-indigo-700 text-white rounded-3xl p-5 shadow-xl border-4 border-purple-300 cursor-pointer tap-bounce flex flex-col items-center text-center relative overflow-hidden group">
+                <div class="text-5xl md:text-6xl mb-2 float-elem">✨🪔</div>
+                <h2 class="font-fredoka text-xl md:text-2xl text-yellow-200">Diya Trace & Glow</h2>
+                <p class="text-xs md:text-sm mt-1 text-purple-100">Trace 4 fun glowing paths to light up all festive oil lamps!</p>
+                <span class="mt-4 px-4 py-1.5 bg-yellow-400 text-slate-900 rounded-full font-fredoka text-sm shadow">Play 4 Levels ▶</span>
+            </div>
+
+            <!-- Game 5 Card -->
+            <div onclick="startGame('mandala')" class="bg-gradient-to-br from-pink-500 to-fuchsia-600 text-white rounded-3xl p-5 shadow-xl border-4 border-pink-300 cursor-pointer tap-bounce flex flex-col items-center text-center relative overflow-hidden group sm:col-span-2 max-w-md justify-self-center w-full">
+                <div class="text-5xl md:text-6xl mb-2 float-elem">🎨🌸</div>
+                <h2 class="font-fredoka text-xl md:text-2xl text-yellow-200">Mandala Color Fair</h2>
+                <p class="text-xs md:text-sm mt-1 text-pink-100">Tap colors to instantly fill sacred mandala & rangoli patterns!</p>
+                <span class="mt-4 px-4 py-1.5 bg-yellow-400 text-slate-900 rounded-full font-fredoka text-sm shadow">Play Now ▶</span>
+            </div>
+
+        </div>
+
+        <!-- ==================== GAME 1: 9 COLORS OF NAVRATRI ==================== -->
+        <div id="gameColors" class="hidden w-full flex flex-col items-center">
+            <div class="bg-white/90 backdrop-blur rounded-3xl p-4 md:p-6 shadow-xl border-4 border-rose-400 w-full text-center">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-fredoka text-lg md:text-xl text-rose-600">Level <span id="colorLevelText">1</span>/9</span>
+                    <h2 id="colorTargetPrompt" class="font-fredoka text-xl md:text-2xl text-slate-800">Tap the <span id="targetColorName" class="text-red-500 underline">Red</span> Basket!</h2>
+                    <button onclick="speakCurrentColorTarget()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 p-2 rounded-full text-xl shadow">🔊</button>
+                </div>
+
+                <!-- Current Item to match -->
+                <div class="my-4 p-4 bg-amber-50 rounded-2xl border-2 border-dashed border-amber-300 inline-block">
+                    <div id="colorItemIcon" class="text-7xl md:text-8xl float-elem mb-1">👗</div>
+                    <div id="colorItemLabel" class="font-fredoka text-slate-700 text-lg">Festive Chaniya Choli</div>
+                </div>
+
+                <!-- Color Baskets (3 Choices) -->
+                <div class="grid grid-cols-3 gap-3 md:gap-6 mt-4" id="colorBasketsContainer">
+                    <!-- Dynamic baskets injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== GAME 2: DANDIYA BEAT MAKER ==================== -->
+        <div id="gameDandiya" class="hidden w-full flex flex-col items-center">
+            <div class="bg-white/90 backdrop-blur rounded-3xl p-4 md:p-6 shadow-xl border-4 border-amber-400 w-full text-center">
+                <h2 class="font-fredoka text-xl md:text-2xl text-amber-600 mb-2">Dandiya Beat Maker & Recorder</h2>
+                <p class="text-xs md:text-sm text-slate-600 mb-4">Tap the drums and sticks to play music or record your rhythm!</p>
+
+                <!-- Recording Bar Controls -->
+                <div class="flex justify-center items-center gap-3 mb-6 bg-amber-50 p-3 rounded-2xl border border-amber-200">
+                    <button id="recBtn" onclick="toggleRecording()" class="bg-red-500 hover:bg-red-600 text-white font-fredoka px-4 py-2 rounded-full text-sm shadow flex items-center gap-2">
+                        <span id="recDot" class="w-3 h-3 bg-white rounded-full"></span> <span id="recText">Record Beat</span>
+                    </button>
+                    <button id="playRecBtn" onclick="playRecordedBeat()" disabled class="bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-white font-fredoka px-4 py-2 rounded-full text-sm shadow flex items-center gap-2">
+                        ▶ Play My Beat
+                    </button>
+                    <span id="recStatusText" class="text-xs font-bold text-amber-700">Ready</span>
+                </div>
+
+                <!-- Interactive Beat Instruments -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <button onclick="triggerInstrument('dholBass')" class="bg-gradient-to-b from-amber-400 to-amber-600 text-white rounded-2xl p-4 shadow-lg border-b-4 border-amber-800 tap-bounce flex flex-col items-center">
+                        <span class="text-5xl mb-2">🥁</span>
+                        <span class="font-fredoka text-sm">Dhol Bass</span>
+                    </button>
+
+                    <button onclick="triggerInstrument('dholSnare')" class="bg-gradient-to-b from-orange-400 to-orange-600 text-white rounded-2xl p-4 shadow-lg border-b-4 border-orange-800 tap-bounce flex flex-col items-center">
+                        <span class="text-5xl mb-2">🪘</span>
+                        <span class="font-fredoka text-sm">Dhol Treble</span>
+                    </button>
+
+                    <button onclick="triggerInstrument('stickClack')" class="bg-gradient-to-b from-rose-400 to-rose-600 text-white rounded-2xl p-4 shadow-lg border-b-4 border-rose-800 tap-bounce flex flex-col items-center">
+                        <span class="text-5xl mb-2">🥢</span>
+                        <span class="font-fredoka text-sm">Dandiya Clack</span>
+                    </button>
+
+                    <button onclick="triggerInstrument('bellChime')" class="bg-gradient-to-b from-yellow-300 to-yellow-500 text-slate-800 rounded-2xl p-4 shadow-lg border-b-4 border-yellow-700 tap-bounce flex flex-col items-center">
+                        <span class="text-5xl mb-2">🔔</span>
+                        <span class="font-fredoka text-sm">Ghunghroo</span>
+                    </button>
+                </div>
+
+                <!-- Dancing Avatar -->
+                <div class="text-center">
+                    <div id="dancerAvatar" class="text-7xl inline-block transition-transform duration-200">💃</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== GAME 3: VAHANA GOD MATCH ==================== -->
+        <div id="gameVahana" class="hidden w-full flex flex-col items-center">
+            <div class="bg-white/90 backdrop-blur rounded-3xl p-4 md:p-6 shadow-xl border-4 border-emerald-400 w-full text-center">
+                <h2 class="font-fredoka text-xl md:text-2xl text-emerald-700 mb-1">Vahana Matching Game</h2>
+                <p class="text-xs md:text-sm text-slate-600 mb-4">Tap a God on the left, then tap their special animal ride on the right!</p>
+
+                <div class="grid grid-cols-2 gap-4 md:gap-8 items-center" id="vahanaContainer">
+                    <!-- Left Column: Gods -->
+                    <div class="flex flex-col gap-3" id="godsList">
+                        <!-- Injected dynamically -->
+                    </div>
+                    <!-- Right Column: Animals -->
+                    <div class="flex flex-col gap-3" id="animalsList">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== GAME 4: DIYA TRACE & GLOW ==================== -->
+        <div id="gameTrace" class="hidden w-full flex flex-col items-center">
+            <div class="bg-white/90 backdrop-blur rounded-3xl p-4 md:p-6 shadow-xl border-4 border-purple-400 w-full text-center">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="font-fredoka text-lg md:text-xl text-purple-700">Diya Trace & Glow</h2>
+                    <span id="traceLevelTitle" class="font-fredoka text-sm bg-purple-100 text-purple-800 px-3 py-1 rounded-full border border-purple-300">Level 1: Straight Path</span>
+                </div>
+
+                <!-- Level Selector Tabs -->
+                <div class="flex justify-center gap-2 mb-4">
+                    <button onclick="loadTraceLevel(1)" id="traceTab1" class="px-3 py-1 rounded-full font-fredoka text-xs bg-purple-600 text-white shadow">Lvl 1</button>
+                    <button onclick="loadTraceLevel(2)" id="traceTab2" class="px-3 py-1 rounded-full font-fredoka text-xs bg-purple-200 text-purple-800 shadow">Lvl 2</button>
+                    <button onclick="loadTraceLevel(3)" id="traceTab3" class="px-3 py-1 rounded-full font-fredoka text-xs bg-purple-200 text-purple-800 shadow">Lvl 3</button>
+                    <button onclick="loadTraceLevel(4)" id="traceTab4" class="px-3 py-1 rounded-full font-fredoka text-xs bg-purple-200 text-purple-800 shadow">Lvl 4</button>
+                </div>
+
+                <!-- Canvas Tracing Area -->
+                <div class="relative w-full max-w-lg mx-auto aspect-[4/3] bg-slate-900 rounded-2xl border-4 border-amber-400 overflow-hidden shadow-inner flex justify-center items-center">
+                    <canvas id="traceCanvas" width="500" height="375" class="w-full h-full cursor-pointer touch-none"></canvas>
+                </div>
+
+                <p class="text-xs text-slate-500 mt-3">Drag your finger or mouse along the sparkling golden line from start to end!</p>
+            </div>
+        </div>
+
+        <!-- ==================== GAME 5: MANDALA COLOR FAIR ==================== -->
+        <div id="gameMandala" class="hidden w-full flex flex-col items-center">
+            <div class="bg-white/90 backdrop-blur rounded-3xl p-4 md:p-6 shadow-xl border-4 border-pink-400 w-full text-center">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="font-fredoka text-xl text-pink-600">Rangoli & Mandala Color Fair</h2>
+                    <div class="flex gap-2">
+                        <button onclick="switchMandalaTemplate('lotus')" class="text-xs bg-pink-100 hover:bg-pink-200 text-pink-800 px-2.5 py-1 rounded-full font-bold">🌸 Lotus</button>
+                        <button onclick="switchMandalaTemplate('diya')" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 px-2.5 py-1 rounded-full font-bold">🪔 Diya</button>
+                        <button onclick="switchMandalaTemplate('star')" class="text-xs bg-purple-100 hover:bg-purple-200 text-purple-800 px-2.5 py-1 rounded-full font-bold">⭐ Star</button>
+                    </div>
+                </div>
+
+                <!-- Palette Bar -->
+                <div class="flex justify-center items-center gap-2 md:gap-3 mb-4 overflow-x-auto p-2 bg-pink-50 rounded-2xl border border-pink-200" id="colorPalette">
+                    <!-- Colors filled dynamically -->
+                </div>
+
+                <!-- SVG Interactive Mandala Container -->
+                <div class="w-full max-w-md mx-auto aspect-square bg-amber-50/50 rounded-2xl border-4 border-pink-300 p-2 shadow-inner flex justify-center items-center" id="mandalaSvgContainer">
+                    <!-- Dynamic SVG injected here -->
+                </div>
+
+                <div class="mt-4 flex justify-between items-center max-w-md mx-auto px-2">
+                    <span class="text-xs text-slate-500">Pick a color above, then tap any section to fill!</span>
+                    <button onclick="resetMandalaColors()" class="bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">✨ Reset</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-amber-100 text-amber-800 text-center text-xs py-3 border-t border-amber-200 font-semibold">
+        Happy Navratri! 🪔 Designed for Toddler Early Learning & Celebration 🎉
+    </footer>
+
+    <!-- AUDIO ENGINE & GAME LOGIC -->
+    <script>
+        // --- SOUND SYNTHESIS ENGINE (Web Audio API) ---
+        let audioCtx = null;
+        let isMuted = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('soundIcon').innerText = isMuted ? "🔇" : "🔊";
+            document.getElementById('soundText').innerText = isMuted ? "Muted" : "Sound On";
+        }
+
+        function speakText(text) {
+            if (isMuted || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // Stop ongoing speech
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.2;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function playSound(type) {
+            if (isMuted) return;
+            initAudio();
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'pop') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'success') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'dholBass') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(140, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.25);
+                gain.gain.setValueAtTime(0.8, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'dholSnare') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(350, now);
+                osc.frequency.exponentialRampToValueAtTime(120, now + 0.15);
+                gain.gain.setValueAtTime(0.5, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'stickClack') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(1200, now);
+                osc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'bellChime') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1500, now);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(180, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        // --- NAVIGATION CONTROLLER ---
+        let currentActiveGame = null;
+
+        function showMainMenu() {
+            document.getElementById('gameMenu').classList.remove('hidden');
+            document.getElementById('homeBtn').classList.add('hidden');
+            
+            ['gameColors', 'gameDandiya', 'gameVahana', 'gameTrace', 'gameMandala'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            currentActiveGame = null;
+        }
+
+        function startGame(gameId) {
+            initAudio();
+            document.getElementById('gameMenu').classList.add('hidden');
+            document.getElementById('homeBtn').classList.remove('hidden');
+
+            ['gameColors', 'gameDandiya', 'gameVahana', 'gameTrace', 'gameMandala'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+
+            if (gameId === 'colors') {
+                document.getElementById('gameColors').classList.remove('hidden');
+                initColorsGame();
+            } else if (gameId === 'dandiya') {
+                document.getElementById('gameDandiya').classList.remove('hidden');
+                initDandiyaGame();
+            } else if (gameId === 'vahana') {
+                document.getElementById('gameVahana').classList.remove('hidden');
+                initVahanaGame();
+            } else if (gameId === 'trace') {
+                document.getElementById('gameTrace').classList.remove('hidden');
+                initTraceGame();
+            } else if (gameId === 'mandala') {
+                document.getElementById('gameMandala').classList.remove('hidden');
+                initMandalaGame();
+            }
+            currentActiveGame = gameId;
+        }
+
+        // =========================================================================
+        // GAME 1: 9 COLORS OF NAVRATRI
+        // =========================================================================
+        const colorData = [
+            { id: 'red', name: 'Red', hex: '#ef4444', border: 'border-red-500', bg: 'bg-red-500', itemIcon: '👗', itemLabel: 'Red Chaniya Choli' },
+            { id: 'yellow', name: 'Yellow', hex: '#eab308', border: 'border-yellow-500', bg: 'bg-yellow-500', itemIcon: '🌼', itemLabel: 'Yellow Marigold Flower' },
+            { id: 'blue', name: 'Royal Blue', hex: '#2563eb', border: 'border-blue-600', bg: 'bg-blue-600', itemIcon: '🥋', itemLabel: 'Royal Blue Kurta' },
+            { id: 'green', name: 'Green', hex: '#16a34a', border: 'border-green-600', bg: 'bg-green-600', itemIcon: '🍃', itemLabel: 'Green Mango Leaves' },
+            { id: 'orange', name: 'Orange', hex: '#f97316', border: 'border-orange-500', bg: 'bg-orange-500', itemIcon: '🪔', itemLabel: 'Bright Orange Diya' },
+            { id: 'white', name: 'White', hex: '#e2e8f0', border: 'border-slate-400', bg: 'bg-slate-200', itemIcon: '🥛', itemLabel: 'White Sweet Milk' },
+            { id: 'pink', name: 'Pink', hex: '#ec4899', border: 'border-pink-500', bg: 'bg-pink-500', itemIcon: '🌸', itemLabel: 'Pink Lotus Blossom' },
+            { id: 'purple', name: 'Purple', hex: '#9333ea', border: 'border-purple-600', bg: 'bg-purple-600', itemIcon: '🥢', itemLabel: 'Purple Dandiya Sticks' },
+            { id: 'peacock', name: 'Peacock Blue', hex: '#0d9488', border: 'border-teal-600', bg: 'bg-teal-600', itemIcon: '🦚', itemLabel: 'Peacock Feather' }
+        ];
+
+        let colorRounds = [];
+        let currentColorIndex = 0;
+
+        function initColorsGame() {
+            // Shuffle rounds completely
+            colorRounds = [...colorData].sort(() => Math.random() - 0.5);
+            currentColorIndex = 0;
+            loadColorRound();
+        }
+
+        function loadColorRound() {
+            const currentRound = colorRounds[currentColorIndex];
+            document.getElementById('colorLevelText').innerText = currentColorIndex + 1;
+            document.getElementById('targetColorName').innerText = currentRound.name;
+            document.getElementById('targetColorName').style.color = currentRound.hex;
+            document.getElementById('colorItemIcon').innerText = currentRound.itemIcon;
+            document.getElementById('colorItemLabel').innerText = currentRound.itemLabel;
+
+            // Pick 2 wrong choices
+            const otherColors = colorData.filter(c => c.id !== currentRound.id).sort(() => Math.random() - 0.5).slice(0, 2);
+            const choices = [currentRound, ...otherColors].sort(() => Math.random() - 0.5);
+
+            const container = document.getElementById('colorBasketsContainer');
+            container.innerHTML = '';
+
+            choices.forEach(color => {
+                const btn = document.createElement('button');
+                btn.className = `p-4 md:p-6 rounded-3xl ${color.bg} text-white font-fredoka shadow-lg border-4 ${color.border} tap-bounce flex flex-col items-center justify-center gap-2 cursor-pointer`;
+                btn.innerHTML = `
+                    <span class="text-4xl md:text-5xl">🧺</span>
+                    <span class="text-sm md:text-base drop-shadow">${color.name}</span>
+                `;
+                btn.onclick = () => handleColorChoice(color.id, currentRound.id);
+                container.appendChild(btn);
+            });
+
+            speakCurrentColorTarget();
+        }
+
+        function speakCurrentColorTarget() {
+            const round = colorRounds[currentColorIndex];
+            speakText(`Put the ${round.itemLabel} in the ${round.name} basket!`);
+        }
+
+        function handleColorChoice(selectedId, correctId) {
+            if (selectedId === correctId) {
+                playSound('success');
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+                speakText(`Yay! ${colorRounds[currentColorIndex].name}!`);
+
+                setTimeout(() => {
+                    currentColorIndex++;
+                    if (currentColorIndex < colorRounds.length) {
+                        loadColorRound();
+                    } else {
+                        speakText("Super Star! You matched all 9 colors!");
+                        confetti({ particleCount: 150, spread: 100 });
+                        setTimeout(initColorsGame, 2500);
+                    }
+                }, 1200);
+            } else {
+                playSound('wrong');
+                speakText("Try another color!");
+            }
+        }
+
+
+        // =========================================================================
+        // GAME 2: DANDIYA BEAT MAKER & RECORDER
+        // =========================================================================
+        let isRecording = false;
+        let recordedEvents = [];
+        let recStartTime = 0;
+        let isPlayingBack = false;
+
+        function initDandiyaGame() {
+            isRecording = false;
+            recordedEvents = [];
+            document.getElementById('playRecBtn').disabled = true;
+            document.getElementById('recStatusText').innerText = "Ready";
+            document.getElementById('recText').innerText = "Record Beat";
+            document.getElementById('recDot').className = "w-3 h-3 bg-white rounded-full";
+        }
+
+        function triggerInstrument(instId) {
+            playSound(instId);
+
+            // Animate dancer
+            const dancer = document.getElementById('dancerAvatar');
+            const danceFrames = ['💃', '🕺', '✨💃✨'];
+            dancer.innerText = danceFrames[Math.floor(Math.random() * danceFrames.length)];
+            dancer.style.transform = `scale(1.2) rotate(${Math.random() > 0.5 ? 15 : -15}deg)`;
+            setTimeout(() => {
+                dancer.style.transform = 'scale(1) rotate(0deg)';
+            }, 200);
+
+            if (isRecording) {
+                const time = Date.now() - recStartTime;
+                recordedEvents.push({ instId, time });
+            }
+        }
+
+        function toggleRecording() {
+            if (isPlayingBack) return;
+
+            if (!isRecording) {
+                isRecording = true;
+                recordedEvents = [];
+                recStartTime = Date.now();
+                document.getElementById('recStatusText').innerText = "Recording...";
+                document.getElementById('recText').innerText = "Stop";
+                document.getElementById('recDot').className = "w-3 h-3 bg-red-200 rounded-full animate-ping";
+                playSound('pop');
+            } else {
+                isRecording = false;
+                document.getElementById('recStatusText').innerText = `Recorded ${recordedEvents.length} beats!`;
+                document.getElementById('recText').innerText = "Record Beat";
+                document.getElementById('recDot').className = "w-3 h-3 bg-white rounded-full";
+                document.getElementById('playRecBtn').disabled = recordedEvents.length === 0;
+                playSound('success');
+            }
+        }
+
+        function playRecordedBeat() {
+            if (recordedEvents.length === 0 || isRecording || isPlayingBack) return;
+
+            isPlayingBack = true;
+            document.getElementById('recStatusText').innerText = "Playing...";
+            document.getElementById('playRecBtn').disabled = true;
+
+            recordedEvents.forEach((evt) => {
+                setTimeout(() => {
+                    triggerInstrument(evt.instId);
+                }, evt.time);
+            });
+
+            const totalDuration = recordedEvents[recordedEvents.length - 1].time + 500;
+            setTimeout(() => {
+                isPlayingBack = false;
+                document.getElementById('recStatusText').innerText = "Done!";
+                document.getElementById('playRecBtn').disabled = false;
+            }, totalDuration);
+        }
+
+
+        // =========================================================================
+        // GAME 3: VAHANA GOD MATCH
+        // =========================================================================
+        const vahanaPairs = [
+            { id: 'ganesha', god: 'Lord Ganesha', godIcon: '🐘', animal: 'Mooshika Mouse', animalIcon: '🐁', phrase: 'Ganesha rides the clever Mouse!' },
+            { id: 'murugan', god: 'Lord Murugan', godIcon: '🔱', animal: 'Mayura Peacock', animalIcon: '🦚', phrase: 'Murugan rides the beautiful Peacock!' },
+            { id: 'parvati', god: 'Goddess Parvati', godIcon: '🌺', animal: 'Simha Lion', animalIcon: '🦁', phrase: 'Parvati rides the brave Lion!' },
+            { id: 'ayyappan', god: 'Lord Ayyappan', godIcon: '🏹', animal: 'Puli Tiger', animalIcon: '🐅', phrase: 'Ayyappan rides the royal Tiger!' },
+            { id: 'shiva', god: 'Lord Shiva', godIcon: '🌙', animal: 'Nandi Bull', animalIcon: '🐂', phrase: 'Shiva rides Nandi the Bull!' }
+        ];
+
+        let selectedGod = null;
+        let matchedCount = 0;
+
+        function initVahanaGame() {
+            selectedGod = null;
+            matchedCount = 0;
+
+            const gods = [...vahanaPairs].sort(() => Math.random() - 0.5);
+            const animals = [...vahanaPairs].sort(() => Math.random() - 0.5);
+
+            const godsList = document.getElementById('godsList');
+            const animalsList = document.getElementById('animalsList');
+            godsList.innerHTML = '';
+            animalsList.innerHTML = '';
+
+            gods.forEach(pair => {
+                const btn = document.createElement('button');
+                btn.id = `god-${pair.id}`;
+                btn.className = "p-3 rounded-2xl bg-amber-100 hover:bg-amber-200 border-2 border-amber-400 text-slate-800 font-fredoka flex items-center gap-3 shadow tap-bounce transition-all";
+                btn.innerHTML = `<span class="text-3xl">${pair.godIcon}</span> <span class="text-xs md:text-sm text-left">${pair.god}</span>`;
+                btn.onclick = () => selectGod(pair.id);
+                godsList.appendChild(btn);
+            });
+
+            animals.forEach(pair => {
+                const btn = document.createElement('button');
+                btn.id = `animal-${pair.id}`;
+                btn.className = "p-3 rounded-2xl bg-teal-100 hover:bg-teal-200 border-2 border-teal-400 text-slate-800 font-fredoka flex items-center gap-3 shadow tap-bounce transition-all";
+                btn.innerHTML = `<span class="text-3xl">${pair.animalIcon}</span> <span class="text-xs md:text-sm text-left">${pair.animal}</span>`;
+                btn.onclick = () => selectAnimal(pair.id);
+                animalsList.appendChild(btn);
+            });
+
+            speakText("Match each God to their animal ride!");
+        }
+
+        function selectGod(id) {
+            playSound('pop');
+            // Reset previous god selection styles
+            vahanaPairs.forEach(p => {
+                const elem = document.getElementById(`god-${p.id}`);
+                if (elem && !elem.disabled) {
+                    elem.classList.remove('ring-4', 'ring-amber-500', 'bg-amber-300');
+                }
+            });
+
+            selectedGod = id;
+            const activeElem = document.getElementById(`god-${id}`);
+            activeElem.classList.add('ring-4', 'ring-amber-500', 'bg-amber-300');
+        }
+
+        function selectAnimal(animalId) {
+            if (!selectedGod) {
+                speakText("Tap a God on the left first!");
+                return;
+            }
+
+            if (selectedGod === animalId) {
+                // Correct match!
+                playSound('success');
+                const pair = vahanaPairs.find(p => p.id === animalId);
+                speakText(pair.phrase);
+
+                const godBtn = document.getElementById(`god-${selectedGod}`);
+                const animalBtn = document.getElementById(`animal-${animalId}`);
+
+                godBtn.className = "p-3 rounded-2xl bg-emerald-500 text-white font-fredoka flex items-center gap-3 shadow opacity-75 cursor-default";
+                animalBtn.className = "p-3 rounded-2xl bg-emerald-500 text-white font-fredoka flex items-center gap-3 shadow opacity-75 cursor-default";
+                
+                godBtn.disabled = true;
+                animalBtn.disabled = true;
+
+                selectedGod = null;
+                matchedCount++;
+
+                confetti({ particleCount: 30, spread: 50 });
+
+                if (matchedCount === vahanaPairs.length) {
+                    setTimeout(() => {
+                        speakText("Wonderful! You matched all sacred Vahanas!");
+                        confetti({ particleCount: 150, spread: 90 });
+                        setTimeout(initVahanaGame, 3000);
+                    }, 1000);
+                }
+            } else {
+                playSound('wrong');
+                speakText("Try another animal ride!");
+            }
+        }
+
+
+        // =========================================================================
+        // GAME 4: DIYA TRACE & GLOW (4 PROGRESSIVE LEVELS)
+        // =========================================================================
+        let traceCanvas, traceCtx;
+        let currentTraceLevel = 1;
+        let isTracing = false;
+        let tracePoints = [];
+        let currentPointIndex = 0;
+
+        const traceLevelsData = {
+            1: {
+                title: 'Level 1: Straight Diya Path',
+                nodes: [ {x: 60, y: 187}, {x: 180, y: 187}, {x: 320, y: 187}, {x: 440, y: 187} ]
+            },
+            2: {
+                title: 'Level 2: Rainbow Arch Path',
+                nodes: [ {x: 60, y: 280}, {x: 170, y: 110}, {x: 330, y: 110}, {x: 440, y: 280} ]
+            },
+            3: {
+                title: 'Level 3: Zig-Zag Festive Path',
+                nodes: [ {x: 60, y: 100}, {x: 180, y: 280}, {x: 320, y: 100}, {x: 440, y: 280} ]
+            },
+            4: {
+                title: 'Level 4: Loop-de-Loop Star Path',
+                nodes: [ {x: 60, y: 280}, {x: 150, y: 80}, {x: 250, y: 300}, {x: 350, y: 80}, {x: 440, y: 280} ]
+            }
+        };
+
+        function initTraceGame() {
+            traceCanvas = document.getElementById('traceCanvas');
+            traceCtx = traceCanvas.getContext('2d');
+
+            // Attach touch/mouse listeners
+            traceCanvas.onpointerdown = startTracing;
+            traceCanvas.onpointermove = moveTracing;
+            traceCanvas.onpointerup = endTracing;
+
+            loadTraceLevel(1);
+        }
+
+        function loadTraceLevel(level) {
+            currentTraceLevel = level;
+            currentPointIndex = 0;
+            isTracing = false;
+
+            // Highlight Tab Buttons
+            for (let i = 1; i <= 4; i++) {
+                const tab = document.getElementById(`traceTab${i}`);
+                if (i === level) {
+                    tab.className = "px-3 py-1 rounded-full font-fredoka text-xs bg-purple-600 text-white shadow";
+                } else {
+                    tab.className = "px-3 py-1 rounded-full font-fredoka text-xs bg-purple-200 text-purple-800 shadow";
+                }
+            }
+
+            const levelInfo = traceLevelsData[level];
+            document.getElementById('traceLevelTitle').innerText = levelInfo.title;
+            tracePoints = JSON.parse(JSON.stringify(levelInfo.nodes));
+
+            drawTraceCanvas();
+            speakText(`Level ${level}. Trace the glowing path!`);
+        }
+
+        function drawTraceCanvas() {
+            traceCtx.clearRect(0, 0, traceCanvas.width, traceCanvas.height);
+
+            // Draw background guide curve line
+            traceCtx.beginPath();
+            traceCtx.strokeStyle = 'rgba(245, 158, 11, 0.3)';
+            traceCtx.lineWidth = 18;
+            traceCtx.lineCap = 'round';
+            traceCtx.lineJoin = 'round';
+
+            tracePoints.forEach((pt, i) => {
+                if (i === 0) traceCtx.moveTo(pt.x, pt.y);
+                else traceCtx.lineTo(pt.x, pt.y);
+            });
+            traceCtx.stroke();
+
+            // Draw Completed Trace Line
+            if (currentPointIndex > 0) {
+                traceCtx.beginPath();
+                traceCtx.strokeStyle = '#f59e0b';
+                traceCtx.lineWidth = 14;
+                traceCtx.lineCap = 'round';
+
+                for (let i = 0; i <= currentPointIndex; i++) {
+                    if (i === 0) traceCtx.moveTo(tracePoints[i].x, tracePoints[i].y);
+                    else traceCtx.lineTo(tracePoints[i].x, tracePoints[i].y);
+                }
+                traceCtx.stroke();
+            }
+
+            // Draw Path Nodes & Diyas
+            tracePoints.forEach((pt, i) => {
+                const isLit = i <= currentPointIndex;
+                
+                // Draw Glowing Diya at Node
+                traceCtx.font = '36px serif';
+                traceCtx.textAlign = 'center';
+                traceCtx.textBaseline = 'middle';
+                
+                if (isLit) {
+                    traceCtx.fillText('🪔', pt.x, pt.y);
+                    // Sparkle halo
+                    traceCtx.fillStyle = '#fef08a';
+                    traceCtx.beginPath();
+                    traceCtx.arc(pt.x, pt.y - 20, 8, 0, Math.PI * 2);
+                    traceCtx.fill();
+                } else {
+                    // Unlit target marker
+                    traceCtx.fillStyle = '#6b21a8';
+                    traceCtx.beginPath();
+                    traceCtx.arc(pt.x, pt.y, 14, 0, Math.PI * 2);
+                    traceCtx.fill();
+                    
+                    traceCtx.fillStyle = '#fef08a';
+                    traceCtx.font = 'bold 14px sans-serif';
+                    traceCtx.fillText(i + 1, pt.x, pt.y);
+                }
+            });
+        }
+
+        function getCanvasCoords(e) {
+            const rect = traceCanvas.getBoundingClientRect();
+            return {
+                x: (e.clientX - rect.left) * (traceCanvas.width / rect.width),
+                y: (e.clientY - rect.top) * (traceCanvas.height / rect.height)
+            };
+        }
+
+        function startTracing(e) {
+            e.preventDefault();
+            const coords = getCanvasCoords(e);
+            const startPt = tracePoints[0];
+
+            if (Math.hypot(coords.x - startPt.x, coords.y - startPt.y) < 40) {
+                isTracing = true;
+                currentPointIndex = 0;
+                playSound('pop');
+            }
+        }
+
+        function moveTracing(e) {
+            if (!isTracing) return;
+            e.preventDefault();
+
+            const coords = getCanvasCoords(e);
+            const nextPt = tracePoints[currentPointIndex + 1];
+
+            if (nextPt) {
+                const dist = Math.hypot(coords.x - nextPt.x, coords.y - nextPt.y);
+                if (dist < 35) {
+                    currentPointIndex++;
+                    playSound('bellChime');
+                    drawTraceCanvas();
+
+                    // Check if level completed!
+                    if (currentPointIndex === tracePoints.length - 1) {
+                        isTracing = false;
+                        playSound('success');
+                        confetti({ particleCount: 100, spread: 80 });
+
+                        setTimeout(() => {
+                            if (currentTraceLevel < 4) {
+                                speakText("Great job! Loading next level!");
+                                loadTraceLevel(currentTraceLevel + 1);
+                            } else {
+                                speakText("Hooray! You lit all the lamps across all levels!");
+                                confetti({ particleCount: 200, spread: 120 });
+                            }
+                        }, 1200);
+                    }
+                }
+            }
+        }
+
+        function endTracing(e) {
+            isTracing = false;
+        }
+
+
+        // =========================================================================
+        // GAME 5: MANDALA COLOR FAIR (TAP-TO-FILL SVG SEGMENTS)
+        // =========================================================================
+        const mandalaColors = [
+            { name: 'Saffron', hex: '#f97316' },
+            { name: 'Marigold', hex: '#eab308' },
+            { name: 'Rose', hex: '#ec4899' },
+            { name: 'Royal Blue', hex: '#2563eb' },
+            { name: 'Emerald', hex: '#10b981' },
+            { name: 'Purple', hex: '#a855f7' },
+            { name: 'Turquoise', hex: '#06b6d4' }
+        ];
+
+        let selectedMandalaColor = mandalaColors[0].hex;
+
+        function initMandalaGame() {
+            // Build Color Palette Bar
+            const paletteContainer = document.getElementById('colorPalette');
+            paletteContainer.innerHTML = '';
+
+            mandalaColors.forEach((col, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-10 h-10 md:w-12 md:h-12 rounded-full border-4 ${idx === 0 ? 'border-slate-800 scale-110' : 'border-white'} shadow tap-bounce flex-shrink-0 cursor-pointer`;
+                btn.style.backgroundColor = col.hex;
+                btn.onclick = () => selectMandalaColor(col.hex, btn);
+                paletteContainer.appendChild(btn);
+            });
+
+            switchMandalaTemplate('lotus');
+        }
+
+        function selectMandalaColor(hex, btnElem) {
+            playSound('pop');
+            selectedMandalaColor = hex;
+
+            const allPaletteBtns = document.getElementById('colorPalette').children;
+            for (let b of allPaletteBtns) {
+                b.classList.remove('border-slate-800', 'scale-110');
+                b.classList.add('border-white');
+            }
+            btnElem.classList.remove('border-white');
+            btnElem.classList.add('border-slate-800', 'scale-110');
+        }
+
+        function switchMandalaTemplate(type) {
+            playSound('pop');
+            const svgContainer = document.getElementById('mandalaSvgContainer');
+
+            if (type === 'lotus') {
+                svgContainer.innerHTML = `
+                    <svg viewBox="0 0 300 300" class="w-full h-full">
+                        <circle cx="150" cy="150" r="140" fill="#fef3c7" stroke="#334155" stroke-width="4"/>
+                        <!-- Petals Ring 1 -->
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M150,150 Q120,80 150,30 Q180,80 150,150 Z" />
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M150,150 Q220,120 270,150 Q220,180 150,150 Z" />
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M150,150 Q180,220 150,270 Q120,220 150,150 Z" />
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M150,150 Q80,180 30,150 Q80,120 150,150 Z" />
+                        <!-- Diagonal Petals -->
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M150,150 Q200,90 235,65 Q190,100 150,150 Z" />
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M150,150 Q210,200 235,235 Q190,210 150,150 Z" />
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M150,150 Q100,210 65,235 Q100,190 150,150 Z" />
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M150,150 Q90,100 65,65 Q110,90 150,150 Z" />
+                        <!-- Center Ring -->
+                        <circle class="mandala-path" cx="150" cy="150" r="35" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                    </svg>
+                `;
+            } else if (type === 'diya') {
+                svgContainer.innerHTML = `
+                    <svg viewBox="0 0 300 300" class="w-full h-full">
+                        <circle cx="150" cy="150" r="140" fill="#fff7ed" stroke="#334155" stroke-width="4"/>
+                        <!-- Diya Base Segments -->
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M60,160 Q150,260 240,160 Z"/>
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M60,160 L240,160 L210,130 L90,130 Z"/>
+                        <!-- Flame Segments -->
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M150,130 Q110,80 150,20 Q190,80 150,130 Z"/>
+                        <path class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" d="M150,110 Q130,80 150,45 Q170,80 150,110 Z"/>
+                        <!-- Surrounding Rays -->
+                        <circle class="mandala-path" cx="60" cy="70" r="20" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                        <circle class="mandala-path" cx="240" cy="70" r="20" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                        <circle class="mandala-path" cx="50" cy="220" r="18" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                        <circle class="mandala-path" cx="250" cy="220" r="18" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                    </svg>
+                `;
+            } else if (type === 'star') {
+                svgContainer.innerHTML = `
+                    <svg viewBox="0 0 300 300" class="w-full h-full">
+                        <circle cx="150" cy="150" r="140" fill="#f3e8ff" stroke="#334155" stroke-width="4"/>
+                        <!-- Outer Star Points -->
+                        <polygon class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" points="150,20 180,110 270,110 195,160 225,250 150,195 75,250 105,160 30,110 120,110"/>
+                        <polygon class="mandala-path" fill="#ffffff" stroke="#334155" stroke-width="3" points="150,50 170,120 230,120 180,155 200,220 150,180 100,220 120,155 70,120 130,120"/>
+                        <circle class="mandala-path" cx="150" cy="150" r="30" fill="#ffffff" stroke="#334155" stroke-width="3"/>
+                    </svg>
+                `;
+            }
+
+            // Bind click handlers to all mandala paths
+            const paths = svgContainer.querySelectorAll('.mandala-path');
+            paths.forEach(p => {
+                p.onclick = (e) => {
+                    e.stopPropagation();
+                    p.setAttribute('fill', selectedMandalaColor);
+                    playSound('pop');
+                };
+            });
+        }
+
+        function resetMandalaColors() {
+            playSound('bellChime');
+            const paths = document.querySelectorAll('#mandalaSvgContainer .mandala-path');
+            paths.forEach(p => p.setAttribute('fill', '#ffffff'));
+        }
+
+        // Initialize Menu state on boot
+        showMainMenu();
+    </script>
+</body>
+</html>
